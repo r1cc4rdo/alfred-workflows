@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string></string>
+	<key>category</key>
+	<string>Internet</string>
+	<key>connections</key>
+	<dict>
+		<key>24A950DA-1CD4-4053-9B0D-5035F23B08E8</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>BE9B9655-D529-4DE6-A8F7-7273940FBC47</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Riccardo Gherardi</string>
+	<key>description</key>
+	<string>Connect to IHM services</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>IHM</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>2</integer>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>ihm</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>Filtering entries...</string>
+				<key>script</key>
+				<string>from collections import namedtuple
+import hashlib
+import json
+import sys
+
+stores = {
+    'Beta': ['LAB05'],
+    'Gamma': ['LAB54', 'LAB6'],
+    'Prod': ['S1']}
+
+hosts = {
+    'RedRackham': {
+        'Beta': 'ihmredrackham.integ.somecompany.com',
+        'Gamma': 'ihmredrackham-gamma-pdx.pdx.proxy.somecompany.com',
+        'Prod': 'ihmredrackham-pdx.pdx.proxy.somecompany.com'},
+    'Coulson': {
+        'Beta': 'ihm-coulson-beta.integ.somecompany.com',
+        'Gamma': 'ihm-coulson-gamma.aka.somecompany.com',
+        'Prod': 'ihm-coulson.aka.somecompany.com'},
+    'Paulo': {
+        'Beta': 'ihmpaulo.integ.somecompany.com',
+        'Gamma': 'ihmpaulo-gamma.somecompany.com',
+        'Prod': 'ihmpaulo-prod-pdx.pdx.proxy.somecompany.com'},
+    'RedRackham Dashboard': {
+        'Beta': 'w.somecompany.com/index.php/IHM/RedRackham/Beta',
+        'Gamma': 'w.somecompany.com/index.php/IHM/RedRackham/Gamma',
+        'Prod': 'w.somecompany.com/index.php/IHM/RedRackham/Prod'},
+    'Hilo': {'Prod': 'hilo.somecompany.com'}}
+
+Service = namedtuple('Service', 'host path')
+services = {
+    'Paulo': Service('Paulo', '/stores/{}'),
+    'Onix Planner': Service('Paulo', '/onix/?domain=test&amp;storeId={}#/ci_planner'),
+    'Onix Calibration Run': Service('Paulo', '/onix/?domain=test&amp;storeId={}#/calibration_run'),
+    'MoneyPenny': Service('Hilo', '/moneypenny/?domain=prod#/new-workflow'),
+    'Coulson': Service('Coulson', '/dashboard/store-health/{}/map'),
+    'RedRackham Tiler': Service('RedRackham', '/tiler/index.html#/{}'),
+    'RedRackham Explorer': Service('RedRackham', '/explorer/index.html'),
+    'RedRackham Dashboard': Service('RedRackham Dashboard', '')}
+
+entries = []
+Entry = namedtuple('Entry', 'title url match')
+for service_name in services:
+
+    host_name = services[service_name].host
+    for stage in hosts[host_name]:
+
+        url = hosts[host_name][stage] + services[service_name].path
+        if '{}' in url:
+
+            for store in stores[stage]:
+
+                title = '{} {}'.format(service_name, store)
+                match = ' '.join((service_name, host_name, stage, store)).lower()
+                entries.append(Entry(title, url.format(store), match))
+
+        else:  # endpoint is per stage, not store
+
+            title = '{} {}'.format(service_name, stage)
+            match = ' '.join([service_name, host_name, stage] + stores[stage]).lower()
+            entries.append(Entry(title, url, match))
+
+keywords = sys.argv[1].split()
+print json.dumps({"items": [
+    {
+        "uid": hashlib.md5(entry.title).hexdigest(),
+        "title": entry.title,
+        "subtitle": entry.url,
+        "arg": 'https://{}'.format(entry.url),
+        "match": entry.match
+    }
+    for entry in filter(lambda e: all([k in e.match for k in keywords]), entries)]})</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string>Example: ihm dash gamma</string>
+				<key>title</key>
+				<string>Navigate to IHM services</string>
+				<key>type</key>
+				<integer>3</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>24A950DA-1CD4-4053-9B0D-5035F23B08E8</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>browser</key>
+				<string></string>
+				<key>spaces</key>
+				<string></string>
+				<key>url</key>
+				<string>{query}</string>
+				<key>utf8</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.openurl</string>
+			<key>uid</key>
+			<string>BE9B9655-D529-4DE6-A8F7-7273940FBC47</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string></string>
+	<key>uidata</key>
+	<dict>
+		<key>24A950DA-1CD4-4053-9B0D-5035F23B08E8</key>
+		<dict>
+			<key>xpos</key>
+			<integer>40</integer>
+			<key>ypos</key>
+			<integer>30</integer>
+		</dict>
+		<key>BE9B9655-D529-4DE6-A8F7-7273940FBC47</key>
+		<dict>
+			<key>xpos</key>
+			<integer>220</integer>
+			<key>ypos</key>
+			<integer>30</integer>
+		</dict>
+	</dict>
+	<key>webaddress</key>
+	<string>riccardo.gherardi@gmail.com</string>
+</dict>
+</plist>
