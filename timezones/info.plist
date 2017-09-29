@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>gherardi.riccardo.timezones</string>
+	<key>category</key>
+	<string>Tools</string>
+	<key>connections</key>
+	<dict>
+		<key>83FD8E37-49F9-4C3C-96D1-0D2A8A5E724D</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>BBA48BDB-828F-4899-8A01-46E7536B1254</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>94B129FB-9958-48F9-946F-EFCAE8F99A09</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>5E889A2E-0DDE-48A7-91DA-9707EEA10FD8</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>BBA48BDB-828F-4899-8A01-46E7536B1254</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>94B129FB-9958-48F9-946F-EFCAE8F99A09</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Riccardo Gherardi</string>
+	<key>description</key>
+	<string>Show world timezones</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Timezones</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>68</integer>
+				<key>keyword</key>
+				<string>clocks</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>Building timezone list...</string>
+				<key>script</key>
+				<string>try:
+	import pytz
+except ImportError:
+	import local_pytz as pytz
+
+import sys
+import json
+from datetime import datetime
+
+filename = 'tz.json'
+try:
+    with open(filename) as f:
+        shortlist = json.load(f)
+except (OSError, IOError):
+    shortlist = pytz.all_timezones
+
+query = sys.argv[1]
+timezones = filter(lambda tz: query in tz.lower(), pytz.all_timezones) if query else shortlist
+
+results = []
+for tz in timezones:
+
+    name = tz.split('/')[-1].replace('_', ' ')
+    tz_now = datetime.now(pytz.timezone(tz))
+    tz_time, tz_id, tz_offset = tz_now.strftime('%H:%M_%z_%Z').split('_')
+    title = '{} {} ({} {})'.format(tz_time, name, tz_id, tz_offset)
+
+    subtitle = '{} this timezone {} the shortlist'
+    subtitle = subtitle.format(*(('Remove', 'from') if tz in shortlist else ('Add', 'to')))
+
+    results.append(
+    {
+        "title": title,
+        "subtitle": subtitle,
+        "arg": tz,
+        "icon": {"path": "images/{:02d}.png".format(tz_now.hour)}
+    })
+
+print json.dumps({"items": results})
+</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string>Example: clocks rome</string>
+				<key>title</key>
+				<string>Show world timezones</string>
+				<key>type</key>
+				<integer>3</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>83FD8E37-49F9-4C3C-96D1-0D2A8A5E724D</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>68</integer>
+				<key>script</key>
+				<string>try:
+	import pytz
+except ImportError:
+	import local_pytz as pytz
+
+import sys
+import json
+from datetime import datetime
+
+filename = 'tz.json'
+try:
+    with open(filename, 'r') as f:
+        shortlist = json.load(f)
+except (OSError, IOError):
+    shortlist = []
+
+query = sys.argv[1]
+if query in shortlist:
+	shortlist.remove(query)
+	message = 'removed from shortlist'
+else:
+	shortlist.append(query)
+	message = 'added to the shortlist'
+
+def tz_name_to_offset(tz_name):
+	dt = datetime.now(pytz.timezone(tz_name))
+	return int(dt.strftime('%z'))
+shortlist = sorted(shortlist, key=tz_name_to_offset)
+
+try:
+    with open(filename ,'w') as f:
+        json.dump(shortlist, f)
+except (OSError, IOError):
+	message = 'Error while saving shortlist to disk'
+
+print message</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>3</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>94B129FB-9958-48F9-946F-EFCAE8F99A09</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>{query}</string>
+				<key>title</key>
+				<string>{var:tz}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>5E889A2E-0DDE-48A7-91DA-9707EEA10FD8</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string>{query}</string>
+				<key>variables</key>
+				<dict>
+					<key>tz</key>
+					<string>{query}</string>
+				</dict>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>BBA48BDB-828F-4899-8A01-46E7536B1254</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string></string>
+	<key>uidata</key>
+	<dict>
+		<key>5E889A2E-0DDE-48A7-91DA-9707EEA10FD8</key>
+		<dict>
+			<key>xpos</key>
+			<integer>460</integer>
+			<key>ypos</key>
+			<integer>30</integer>
+		</dict>
+		<key>83FD8E37-49F9-4C3C-96D1-0D2A8A5E724D</key>
+		<dict>
+			<key>xpos</key>
+			<integer>30</integer>
+			<key>ypos</key>
+			<integer>30</integer>
+		</dict>
+		<key>94B129FB-9958-48F9-946F-EFCAE8F99A09</key>
+		<dict>
+			<key>xpos</key>
+			<integer>290</integer>
+			<key>ypos</key>
+			<integer>30</integer>
+		</dict>
+		<key>BBA48BDB-828F-4899-8A01-46E7536B1254</key>
+		<dict>
+			<key>xpos</key>
+			<integer>200</integer>
+			<key>ypos</key>
+			<integer>60</integer>
+		</dict>
+	</dict>
+	<key>webaddress</key>
+	<string>https://github.com/r1cc4rdo/alfred-workflows</string>
+</dict>
+</plist>
