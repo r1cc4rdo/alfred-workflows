@@ -16,6 +16,19 @@ It has support for the pomodoro technique.
 ![timer pomodoro screenshot](./images/pomodoro.png)
 Use it as a template for adding your own custom timer keywords.
 
+## timezones
+
+Show world timezones.
+
+Does not require an internet connection.
+![timezones screenshot 1](./images/timezones1.png)
+
+Add your timezones to a personalized shorlist:
+![timezones screenshot 2](./images/timezones2.png)
+![timezones screenshot 3](./images/timezones3.png)
+
+The workflow relies on the the PyTZ library. It comes with its own copy, but will use the one in your system if available.
+
 ## ihm
 
 Fast navigation to somecompany's websites.
