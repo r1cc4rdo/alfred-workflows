@@ -34,16 +34,13 @@ The workflow relies on the the PyTZ library. It comes with its own copy, but wil
 Messages as speech or large text.
 
 ![showtell screenshot 1](./images/showtell1.png)
-
-results in:
-
 ![showtell screenshot 2](./images/showtell2.png)
 
 A double space adds a newline in the message.
 
 Otherwise, opt for audio output:
 
-![showtell screenshot 3](./images/showtell2.png)
+![showtell screenshot 3](./images/showtell3.png)
 
 ## outlook
 
