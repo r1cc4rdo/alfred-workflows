@@ -107,7 +107,7 @@ results = []
 for tz in timezones:
 
     name = tz.split('/')[-1].replace('_', ' ')
-    tz_now = datetime.now(pytz.timezone(tz))
+    tz_now = datetime.now(pytz.utc).astimezone(pytz.timezone(tz))
     tz_time, tz_id, tz_offset = tz_now.strftime('%H:%M_%z_%Z').split('_')
     title = '{} {} ({} {})'.format(tz_time, name, tz_id, tz_offset)
 
@@ -177,7 +177,7 @@ else:
 	message = 'added to the shortlist'
 
 def tz_name_to_offset(tz_name):
-	dt = datetime.now(pytz.timezone(tz_name))
+	dt = datetime.now(pytz.utc).astimezone(pytz.timezone(tz_name))
 	return int(dt.strftime('%z'))
 shortlist = sorted(shortlist, key=tz_name_to_offset)
 

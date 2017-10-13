@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>bundleid</key>
-	<string></string>
+	<string>gherardi.riccardo.epoch</string>
 	<key>category</key>
 	<string>Tools</string>
 	<key>connections</key>
@@ -53,11 +53,13 @@
 			<key>config</key>
 			<dict>
 				<key>alfredfiltersresults</key>
-				<true/>
+				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
 				<key>argumenttrimmode</key>
 				<integer>0</integer>
 				<key>argumenttype</key>
-				<integer>2</integer>
+				<integer>1</integer>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>keyword</key>
@@ -73,21 +75,40 @@
 				<key>runningsubtext</key>
 				<string></string>
 				<key>script</key>
-				<string>import time
+				<string>import sys
+import time
 import json
 
-curtime = time.time()
-print json.dumps({
-    "rerun" : 1,
-    "items": [
-	{
-        "uid": "epoch{}".format(unit),
-        "title": "Copy epoch to clipboard ({})".format(unit),
-        "subtitle": str(int(curtime * mul)),
-        "arg": str(int(curtime * mul))
-    }
-	for unit, mul in [('s', 1), ('ms', 1000)]]
-})
+
+def to_string(epoch):
+	return time.strftime("%Y-%m-%dT%H:%M:%S-00", time.gmtime(epoch))
+
+
+def item(fmt, time_str):
+    message = '{} {}'.format(time_str, sys.argv[1]) if sys.argv[1] else time_str
+    return {
+        "uid": "epoch{}".format(fmt),
+        "title": "Copy epoch to clipboard ({})".format(fmt),
+        "subtitle": message,
+        "arg": message}
+
+try:
+    
+    rfc2822 = to_string(float(sys.argv[1]))
+    print json.dumps({"items": [{
+        "title": "Copy rfc2822 to clipboard",
+        "subtitle": rfc2822,
+        "arg": rfc2822}]})
+    
+except ValueError:
+
+    now = time.time()
+    print json.dumps({
+        "rerun": 1,
+        "items": [
+            item('s', str(int(now))),
+            item('ms', str(int(now * 1000))),
+            item('rfc2822', to_string(now))]})
 </string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
@@ -100,7 +121,7 @@ print json.dumps({
 				<key>type</key>
 				<integer>3</integer>
 				<key>withspace</key>
-				<false/>
+				<true/>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.input.scriptfilter</string>
@@ -130,6 +151,6 @@ print json.dumps({
 		</dict>
 	</dict>
 	<key>webaddress</key>
-	<string>riccardo.gherardi@gmail.com</string>
+	<string>https://github.com/r1cc4rdo/alfred-workflows</string>
 </dict>
 </plist>

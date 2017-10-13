@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string></string>
+	<key>category</key>
+	<string>Productivity</string>
+	<key>connections</key>
+	<dict>
+		<key>6467C5AF-D1D7-484A-887B-C4D1E7D966FE</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>5834A93C-A508-4DBB-A571-E0C8EBFE4D46</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>8FB00DA2-34B5-494C-9CDD-836C2704C65C</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>CF2AFC5F-52FF-4C4B-9F4B-015E98267E06</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>A4626FDC-6334-4DE0-8198-B1B0B831525A</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>5834A93C-A508-4DBB-A571-E0C8EBFE4D46</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>DD6965D6-D29A-43EF-B232-740F1A14FCC7</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>FC4272B3-560A-4159-9102-A4BFE5D6D8DD</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string></string>
+	<key>description</key>
+	<string></string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Outloook actions</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>applescript</key>
+				<string>on alfred_script(q)
+
+	tell application "Microsoft Outlook"
+		
+		set view of the first main window to mail view
+		set selected folder to inbox
+		activate
+
+	end tell
+
+end alfred_script</string>
+				<key>cachescript</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.applescript</string>
+			<key>uid</key>
+			<string>CF2AFC5F-52FF-4C4B-9F4B-015E98267E06</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>mail</string>
+				<key>subtext</key>
+				<string></string>
+				<key>text</key>
+				<string>Show inbox in Outlook</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>8FB00DA2-34B5-494C-9CDD-836C2704C65C</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>calendar</string>
+				<key>subtext</key>
+				<string></string>
+				<key>text</key>
+				<string>Show today in Outlook</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>DD6965D6-D29A-43EF-B232-740F1A14FCC7</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>applescript</key>
+				<string>on alfred_script(q)
+
+	tell application "Microsoft Outlook"
+		
+		go to current date
+		activate
+
+	end tell
+
+end alfred_script</string>
+				<key>cachescript</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.applescript</string>
+			<key>uid</key>
+			<string>FC4272B3-560A-4159-9102-A4BFE5D6D8DD</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>applescript</key>
+				<string>on alfred_script(q)
+
+    tell application "Microsoft Outlook"
+
+        -- close reminders window if visible
+        set windowClosed to false
+        if "Reminder" is in (name of the front window) then
+            set windowClosed to true
+            close front window
+        end if
+
+		-- collect selected messages
+        set messageSet to current messages
+        if messageSet = {} then
+            error "Select at least one message."
+            error -128
+        end if
+
+        -- move the selected messages
+        set archiveFolder to folder "archive" of inbox
+        repeat with aMessage in messageSet
+            move aMessage to archiveFolder
+        end repeat
+
+        -- re-open if we closed it
+        activate
+        if windowClosed is true then
+            tell application "System Events" to keystroke "9" using command down
+        end if
+
+    end tell
+
+end alfred_script</string>
+				<key>cachescript</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.applescript</string>
+			<key>uid</key>
+			<string>5834A93C-A508-4DBB-A571-E0C8EBFE4D46</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>archive</string>
+				<key>subtext</key>
+				<string></string>
+				<key>text</key>
+				<string>Archive selected messages in Outlook</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>A4626FDC-6334-4DE0-8198-B1B0B831525A</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>action</key>
+				<integer>0</integer>
+				<key>argument</key>
+				<integer>0</integer>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>hotkey</key>
+				<integer>50</integer>
+				<key>hotmod</key>
+				<integer>524288</integer>
+				<key>hotstring</key>
+				<string>`</string>
+				<key>leftcursor</key>
+				<false/>
+				<key>modsmode</key>
+				<integer>0</integer>
+				<key>relatedApps</key>
+				<array>
+					<string>com.microsoft.Outlook</string>
+				</array>
+				<key>relatedAppsMode</key>
+				<integer>1</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.hotkey</string>
+			<key>uid</key>
+			<string>6467C5AF-D1D7-484A-887B-C4D1E7D966FE</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string></string>
+	<key>uidata</key>
+	<dict>
+		<key>5834A93C-A508-4DBB-A571-E0C8EBFE4D46</key>
+		<dict>
+			<key>xpos</key>
+			<integer>240</integer>
+			<key>ypos</key>
+			<integer>310</integer>
+		</dict>
+		<key>6467C5AF-D1D7-484A-887B-C4D1E7D966FE</key>
+		<dict>
+			<key>xpos</key>
+			<integer>30</integer>
+			<key>ypos</key>
+			<integer>450</integer>
+		</dict>
+		<key>8FB00DA2-34B5-494C-9CDD-836C2704C65C</key>
+		<dict>
+			<key>xpos</key>
+			<integer>30</integer>
+			<key>ypos</key>
+			<integer>30</integer>
+		</dict>
+		<key>A4626FDC-6334-4DE0-8198-B1B0B831525A</key>
+		<dict>
+			<key>xpos</key>
+			<integer>30</integer>
+			<key>ypos</key>
+			<integer>310</integer>
+		</dict>
+		<key>CF2AFC5F-52FF-4C4B-9F4B-015E98267E06</key>
+		<dict>
+			<key>xpos</key>
+			<integer>240</integer>
+			<key>ypos</key>
+			<integer>30</integer>
+		</dict>
+		<key>DD6965D6-D29A-43EF-B232-740F1A14FCC7</key>
+		<dict>
+			<key>xpos</key>
+			<integer>30</integer>
+			<key>ypos</key>
+			<integer>170</integer>
+		</dict>
+		<key>FC4272B3-560A-4159-9102-A4BFE5D6D8DD</key>
+		<dict>
+			<key>xpos</key>
+			<integer>240</integer>
+			<key>ypos</key>
+			<integer>170</integer>
+		</dict>
+	</dict>
+	<key>webaddress</key>
+	<string></string>
+</dict>
+</plist>

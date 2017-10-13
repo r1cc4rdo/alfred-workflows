@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>bundleid</key>
-	<string></string>
+	<string>gherardi.riccardo.timer</string>
 	<key>category</key>
 	<string>Productivity</string>
 	<key>connections</key>
@@ -99,6 +99,21 @@
 				<false/>
 			</dict>
 		</array>
+		<key>7ABCB13F-EDE4-4852-AF53-E107B909B54B</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>7E4DBADE-6539-4474-B400-825C1186F925</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>7E4DBADE-6539-4474-B400-825C1186F925</key>
+		<array/>
 		<key>8077FA09-6686-4A30-AFEB-2A1DF159940E</key>
 		<array>
 			<dict>
@@ -130,6 +145,16 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>8B532EA1-F46D-4AD3-9E34-BAFB8E6ADF71</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>7ABCB13F-EDE4-4852-AF53-E107B909B54B</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -205,9 +230,11 @@ seconds = sum(map(mul, map(int, hms), (3600, 60, 1)))
 print json.dumps({
     "variables":
     {
+        "desc": ":alarm_clock:",
         "startmsg": "Starting timer",
         "endmsg": "Time's up!" if not message else message,
-        "seconds": str(seconds)
+        "seconds": str(seconds),
+		"color": "black"
     },
     "items":
     [{
@@ -238,27 +265,6 @@ print json.dumps({
 			<string>593BEDD0-90D3-44EB-A8FA-B207543286BD</string>
 			<key>version</key>
 			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argumenttype</key>
-				<integer>2</integer>
-				<key>keyword</key>
-				<string>pomodoro</string>
-				<key>subtext</key>
-				<string>Focus!</string>
-				<key>text</key>
-				<string>Start a pomodoro</string>
-				<key>withspace</key>
-				<false/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.keyword</string>
-			<key>uid</key>
-			<string>1B782DC5-8BCB-4356-ACA9-F56A369C6868</string>
-			<key>version</key>
-			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -318,14 +324,6 @@ print json.dumps({
 			<integer>1</integer>
 		</dict>
 		<dict>
-			<key>type</key>
-			<string>alfred.workflow.utility.junction</string>
-			<key>uid</key>
-			<string>90273618-B4E4-46A9-B93D-CC7D2DE161E6</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
 			<key>config</key>
 			<dict>
 				<key>seconds</key>
@@ -341,10 +339,43 @@ print json.dumps({
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>pomodoro</string>
+				<key>subtext</key>
+				<string>Focus!</string>
+				<key>text</key>
+				<string>Start a pomodoro</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>1B782DC5-8BCB-4356-ACA9-F56A369C6868</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.junction</string>
+			<key>uid</key>
+			<string>90273618-B4E4-46A9-B93D-CC7D2DE161E6</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>argument</key>
-				<string></string>
+				<string>{var:seconds}</string>
 				<key>variables</key>
 				<dict>
+					<key>color</key>
+					<string>red</string>
+					<key>desc</key>
+					<string>:tomato:</string>
 					<key>endmsg</key>
 					<string>Good job!</string>
 					<key>seconds</key>
@@ -357,6 +388,78 @@ print json.dumps({
 			<string>alfred.workflow.utility.argument</string>
 			<key>uid</key>
 			<string>46C609CE-6E44-426D-925F-7A6CB7B17945</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import sys
+import time
+import json
+import tempfile
+
+desc, seconds, color = sys.argv[1].split()
+with open('/tmp/timers.json', 'w') as f:
+    json.dump([{
+		'desc': desc,
+        'start_time': time.time(),
+        'duration': int(seconds),
+        'color': color
+    }], f)</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>3</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>7E4DBADE-6539-4474-B400-825C1186F925</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>browser</key>
+				<string></string>
+				<key>spaces</key>
+				<string></string>
+				<key>url</key>
+				<string>https://getbitbar.com/</string>
+				<key>utf8</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.openurl</string>
+			<key>uid</key>
+			<string>9956EC6C-B333-4A87-965D-A7457CBCD9D8</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string>{var:desc} {var:seconds} {var:color}</string>
+				<key>variables</key>
+				<dict/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>7ABCB13F-EDE4-4852-AF53-E107B909B54B</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -388,6 +491,10 @@ print json.dumps({
 				<string></string>
 				<key>variables</key>
 				<dict>
+					<key>color</key>
+					<string>green</string>
+					<key>desc</key>
+					<string>:tomato:</string>
 					<key>endmsg</key>
 					<string>Back to work!</string>
 					<key>seconds</key>
@@ -431,6 +538,10 @@ print json.dumps({
 				<string></string>
 				<key>variables</key>
 				<dict>
+					<key>color</key>
+					<string>blue</string>
+					<key>desc</key>
+					<string>:tomato:</string>
 					<key>endmsg</key>
 					<string>Back to work!</string>
 					<key>seconds</key>
@@ -468,16 +579,16 @@ print json.dumps({
 		<key>225ED2BA-4749-4CC2-AE8A-C2EB5BF008D2</key>
 		<dict>
 			<key>xpos</key>
-			<integer>680</integer>
+			<integer>690</integer>
 			<key>ypos</key>
-			<integer>170</integer>
+			<integer>90</integer>
 		</dict>
 		<key>2BAEB90D-8D2F-4824-8C6F-8361A5E38A93</key>
 		<dict>
 			<key>xpos</key>
-			<integer>590</integer>
+			<integer>600</integer>
 			<key>ypos</key>
-			<integer>200</integer>
+			<integer>120</integer>
 		</dict>
 		<key>3C9405C8-53E7-43E9-A4A7-D4122B31F8B1</key>
 		<dict>
@@ -500,6 +611,24 @@ print json.dumps({
 			<key>ypos</key>
 			<integer>30</integer>
 		</dict>
+		<key>7ABCB13F-EDE4-4852-AF53-E107B909B54B</key>
+		<dict>
+			<key>xpos</key>
+			<integer>430</integer>
+			<key>ypos</key>
+			<integer>280</integer>
+		</dict>
+		<key>7E4DBADE-6539-4474-B400-825C1186F925</key>
+		<dict>
+			<key>note</key>
+			<string>Optional bitbar support.
+Find the script in the
+workflow directory</string>
+			<key>xpos</key>
+			<integer>520</integer>
+			<key>ypos</key>
+			<integer>250</integer>
+		</dict>
 		<key>8077FA09-6686-4A30-AFEB-2A1DF159940E</key>
 		<dict>
 			<key>xpos</key>
@@ -510,16 +639,26 @@ print json.dumps({
 		<key>8B532EA1-F46D-4AD3-9E34-BAFB8E6ADF71</key>
 		<dict>
 			<key>xpos</key>
-			<integer>420</integer>
+			<integer>430</integer>
 			<key>ypos</key>
-			<integer>170</integer>
+			<integer>90</integer>
 		</dict>
 		<key>90273618-B4E4-46A9-B93D-CC7D2DE161E6</key>
 		<dict>
 			<key>xpos</key>
-			<integer>330</integer>
+			<integer>320</integer>
 			<key>ypos</key>
 			<integer>200</integer>
+		</dict>
+		<key>9956EC6C-B333-4A87-965D-A7457CBCD9D8</key>
+		<dict>
+			<key>note</key>
+			<string>Download bitbar from
+https://getbitbar.com/</string>
+			<key>xpos</key>
+			<integer>690</integer>
+			<key>ypos</key>
+			<integer>250</integer>
 		</dict>
 		<key>C233D9BD-4D09-4A3E-8864-24FF5597D734</key>
 		<dict>
@@ -531,12 +670,12 @@ print json.dumps({
 		<key>DB44975B-69F4-4C9A-A2C9-B8C7528E6661</key>
 		<dict>
 			<key>xpos</key>
-			<integer>850</integer>
+			<integer>860</integer>
 			<key>ypos</key>
-			<integer>170</integer>
+			<integer>90</integer>
 		</dict>
 	</dict>
 	<key>webaddress</key>
-	<string>riccardo.gherardi@gmail.com</string>
+	<string>https://github.com/r1cc4rdo/alfred-workflows</string>
 </dict>
 </plist>
