@@ -29,6 +29,29 @@ Add your timezones to a personalized shorlist:
 
 The workflow relies on the the PyTZ library. It comes with its own copy, but will use the one in your system if available.
 
+## showtell
+
+Messages as speech or large text.
+
+![showtell screenshot 1](./images/showtell1.png)
+results in:
+![showtell screenshot 2](./images/showtell2.png)
+
+Otherwise, opt for audio output:
+![showtell screenshot 3](./images/showtell2.png)
+
+## outlook
+
+Shortcuts to mail and calendar view.
+
+![outlook screenshot 1](./images/outlook1.png)
+
+![outlook screenshot 2](./images/outlook2.png)
+
+The archive command is bound to an hotkey, change it in the workflow.
+
+![outlook screenshot 3](./images/outlook3.png)
+
 ## ihm
 
 Fast navigation to somecompany's websites.
