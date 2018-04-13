@@ -100,7 +100,7 @@ try:
 except (OSError, IOError):
     shortlist = pytz.all_timezones
 
-query = sys.argv[1]
+query = sys.argv[1].replace(' ', '_')
 timezones = filter(lambda tz: query in tz.lower(), pytz.all_timezones) if query else shortlist
 
 results = []
