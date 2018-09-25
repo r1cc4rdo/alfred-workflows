@@ -54,6 +54,20 @@ The archive command is bound to an hotkey, change it in the workflow.
 
 ![outlook screenshot 3](./images/outlook3.png)
 
+## chime
+
+Opens Amazon Chime.
+
+![sshfs screenshot 3](./images/chime.png)
+
+You can provide a username as a parameter.
+
+## sshfs
+
+Mounts remote volumes using sshfs.
+
+![sshfs screenshot 3](./images/sshfs.png)
+
 ## ihm
 
 Fast navigation to somecompany's websites.
